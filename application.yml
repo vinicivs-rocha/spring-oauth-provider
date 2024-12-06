@@ -1,0 +1,9 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/oauth?authSource=admin
+      user: oauth
+      password: "123456"
+jwt:
+  secret: "jwt-tokens-that-should-be-changed-production"
+  issuer: "jwt-issuer"
