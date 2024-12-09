@@ -10,6 +10,12 @@ data class Name private constructor(val value: String) {
     companion object {
         operator fun invoke(value: String): Either<Failure, Name> = either {
             ensure(value.isNotBlank()) { Failure(code = FailureCode.InvalidInputParameter, "Name cannot be blank") }
+            ensure(value.length >= 3) {
+                Failure(
+                    code = FailureCode.InvalidInputParameter,
+                    "Name must be at least 3 characters long"
+                )
+            }
             Name(value)
         }
     }
