@@ -14,13 +14,13 @@ data class Email private constructor(val value: String) {
         operator fun invoke(value: String): Either<Failure, Email> = either {
             ensure(value.isNotBlank()) {
                 Failure(
-                    code = FailureCode.InvalidParameter,
+                    code = FailureCode.InvalidInputParameter,
                     message = "Email cannot be blank"
                 )
             }
             ensure(emailRegex.matches(value)) {
                 Failure(
-                    code = FailureCode.InvalidParameter,
+                    code = FailureCode.InvalidInputParameter,
                     message = "Invalid email format"
                 )
             }

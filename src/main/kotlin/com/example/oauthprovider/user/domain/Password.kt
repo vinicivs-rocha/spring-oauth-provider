@@ -9,10 +9,10 @@ import com.example.oauthprovider.core.FailureCode
 data class Password private constructor(val value: String) {
     companion object {
         operator fun invoke(value: String): Either<Failure, Password> = either {
-            ensure(value.isNotBlank()) { Failure(code = FailureCode.InvalidParameter, "Password cannot be blank") }
+            ensure(value.isNotBlank()) { Failure(code = FailureCode.InvalidInputParameter, "Password cannot be blank") }
             ensure(value.length >= 6) {
                 Failure(
-                    code = FailureCode.InvalidParameter,
+                    code = FailureCode.InvalidInputParameter,
                     "Password must be at least 6 characters long"
                 )
             }

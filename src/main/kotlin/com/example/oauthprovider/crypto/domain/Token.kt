@@ -16,7 +16,7 @@ enum class TokenAudience(val key: String) {
             val type = entries.find { it.key == key }
             ensureNotNull(type) {
                 Failure(
-                    code = FailureCode.InvalidParameter,
+                    code = FailureCode.InvalidInputParameter,
                     message = "No token type found with $key"
                 )
             }
