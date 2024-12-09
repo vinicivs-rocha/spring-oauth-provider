@@ -1,4 +1,4 @@
-package com.example.oauthprovider.core
+package com.example.oauthprovider.either.domain
 
 enum class FailureCode {
     NotFound,

@@ -2,11 +2,11 @@ package com.example.oauthprovider.user.application.usecases
 
 import arrow.core.Either
 import arrow.core.raise.either
-import com.example.oauthprovider.core.Failure
 import com.example.oauthprovider.crypto.application.gateways.EncryptionGateway
 import com.example.oauthprovider.crypto.application.gateways.JwtGateway
 import com.example.oauthprovider.crypto.domain.Token
 import com.example.oauthprovider.crypto.domain.TokenAudience
+import com.example.oauthprovider.either.domain.Failure
 import com.example.oauthprovider.user.application.repositories.UserRepository
 import com.example.oauthprovider.user.domain.Email
 import com.example.oauthprovider.user.domain.Name
@@ -26,7 +26,7 @@ class CreateUser(
         val user = User(
             _name = name,
             _email = email,
-            _password = password,
+            _password = Password(encryptionGateway.hash(password.value)).bind(),
         )
         val token = Token(audience = TokenAudience.Authentication.key, subject = user.id).bind()
         user.addToken(token)

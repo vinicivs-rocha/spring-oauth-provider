@@ -3,8 +3,8 @@ package com.example.oauthprovider.crypto.infra.gateways
 import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
-import com.example.oauthprovider.core.Failure
-import com.example.oauthprovider.core.FailureCode
+import com.example.oauthprovider.either.domain.Failure
+import com.example.oauthprovider.either.domain.FailureCode
 import com.example.oauthprovider.crypto.application.gateways.JwtGateway
 import com.example.oauthprovider.crypto.domain.Token
 import com.example.oauthprovider.crypto.infra.config.JwtProperties

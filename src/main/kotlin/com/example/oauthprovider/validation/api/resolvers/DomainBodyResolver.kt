@@ -8,8 +8,8 @@ import arrow.core.raise.ensureNotNull
 import arrow.core.right
 import com.example.oauthprovider.core.DomainBody
 import com.example.oauthprovider.core.DomainField
-import com.example.oauthprovider.core.Failure
-import com.example.oauthprovider.core.FailureCode
+import com.example.oauthprovider.either.domain.Failure
+import com.example.oauthprovider.either.domain.FailureCode
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
