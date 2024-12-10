@@ -1,7 +1,7 @@
 package com.example.oauthprovider.user.api.controllers
 
 import arrow.core.Either
-import com.example.oauthprovider.core.DomainBody
+import com.example.oauthprovider.validation.api.annotations.DomainBody
 import com.example.oauthprovider.user.api.requests.SignupRequest
 import com.example.oauthprovider.user.application.usecases.CreateUser
 import jakarta.servlet.http.Cookie

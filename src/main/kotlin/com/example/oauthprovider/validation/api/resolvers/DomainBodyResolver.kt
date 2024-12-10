@@ -6,8 +6,8 @@ import arrow.core.raise.either
 import arrow.core.raise.ensure
 import arrow.core.raise.ensureNotNull
 import arrow.core.right
-import com.example.oauthprovider.core.DomainBody
-import com.example.oauthprovider.core.DomainField
+import com.example.oauthprovider.validation.api.annotations.DomainBody
+import com.example.oauthprovider.validation.api.annotations.DomainField
 import com.example.oauthprovider.either.domain.Failure
 import com.example.oauthprovider.either.domain.FailureCode
 import com.fasterxml.jackson.core.type.TypeReference
@@ -51,7 +51,8 @@ class DomainBodyResolver(
                 "No primary constructor found for handler parameter"
             )
 
-        return when (val instance = instantiateDomainValidParameter(constructor, parameterClass.memberProperties, requestBody)) {
+        return when (val instance =
+            instantiateDomainValidParameter(constructor, parameterClass.memberProperties, requestBody)) {
             is Right -> instance.value
             is Either.Left -> when (instance.value.code) {
                 FailureCode.InvalidSetupParameter -> throw IllegalArgumentException(instance.value.message)
@@ -81,32 +82,36 @@ class DomainBodyResolver(
         })
     }
 
-    private fun evaluateValue(property: KProperty1<out Any, *>, inputValues: Map<String, Any>): Either<Failure, Any?> = either {
-        val propertyClass =
-            ensureNotNull(property.returnType.classifier) {
-                Failure(
-                    code = FailureCode.InvalidSetupParameter,
-                    message = "Domain valid constructor parameter must be a kotlin's denotable class"
-                )
-            } as KClass<*>
-        val inputValue = inputValues[property.name]
-        return when (val annotation = property.findAnnotation<DomainField>()) {
-            is DomainField -> validateDomainField(propertyClass, inputValue, annotation.required)
-            else -> ensureNotNull(propertyClass.primaryConstructor?.call(inputValue)) {
-                Failure(
-                    code = FailureCode.InvalidSetupParameter,
-                    message = "Request non-domain parameter ${property.name} must have a primary constructor"
-                )
-            }.right()
+    private fun evaluateValue(property: KProperty1<out Any, *>, inputValues: Map<String, Any>): Either<Failure, Any?> =
+        either {
+            val propertyClass =
+                ensureNotNull(property.returnType.classifier) {
+                    Failure(
+                        code = FailureCode.InvalidSetupParameter,
+                        message = "Domain valid constructor parameter must be a kotlin's denotable class"
+                    )
+                } as KClass<*>
+            val inputValue = inputValues[property.name]
+            return when (val annotation = property.findAnnotation<DomainField>()) {
+                is DomainField -> validateDomainField(propertyClass, inputValue, annotation.required)
+                else -> ensureNotNull(propertyClass.primaryConstructor?.call(inputValue)) {
+                    Failure(
+                        code = FailureCode.InvalidSetupParameter,
+                        message = "Request non-domain parameter ${property.name} must have a primary constructor"
+                    )
+                }.right()
+            }
         }
-    }
 
     private fun validateDomainField(
         domainClass: KClass<*>,
         inputValue: Any?,
         required: Boolean
     ): Either<Failure, Any?> = either {
-        if (inputValue == null && !required) return Right(null)
+        if (inputValue == null) return when (required) {
+            true -> raise(Failure(code = FailureCode.InvalidInputParameter, message = "Domain field required"))
+            false -> null.right()
+        }
 
         val result = ensureNotNull(domainClass.companionObject?.let { companion ->
             val invoke = ensureNotNull(companion.functions.find { it.name == "invoke" }) {

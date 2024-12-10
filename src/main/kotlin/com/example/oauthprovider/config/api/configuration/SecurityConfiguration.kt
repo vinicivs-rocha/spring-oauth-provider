@@ -14,6 +14,10 @@ class SecurityConfiguration {
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http {
             csrf { disable() }
+//            formLogin {
+//                loginPage = "auth/signIn"
+//                permitAll()
+//            }
             authorizeHttpRequests {
                 authorize(anyRequest, permitAll)
             }

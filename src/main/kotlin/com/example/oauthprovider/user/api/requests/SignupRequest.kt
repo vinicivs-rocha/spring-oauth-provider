@@ -1,6 +1,6 @@
 package com.example.oauthprovider.user.api.requests
 
-import com.example.oauthprovider.core.DomainField
+import com.example.oauthprovider.validation.api.annotations.DomainField
 import com.example.oauthprovider.user.domain.Email
 import com.example.oauthprovider.user.domain.Name
 import com.example.oauthprovider.user.domain.Password
