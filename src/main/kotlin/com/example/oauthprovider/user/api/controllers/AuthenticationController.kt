@@ -1,10 +1,8 @@
 package com.example.oauthprovider.user.api.controllers
 
-import arrow.core.Either
-import com.example.oauthprovider.validation.api.annotations.DomainBody
 import com.example.oauthprovider.user.api.requests.SignupRequest
 import com.example.oauthprovider.user.application.usecases.CreateUser
-import jakarta.servlet.http.Cookie
+import com.example.oauthprovider.validation.api.annotations.DomainBody
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -34,19 +32,23 @@ class AuthenticationController(
             password = signupRequest.password
         )
 
-        return when (output) {
-            is Either.Right -> {
-                response.addCookie(Cookie("authenticationToken", output.value.token).apply {
-                    path = "/"
-                    maxAge = 60 * 60 * 24
-                })
-                "home"
-            }
+        println(output.fold({ it.message }, { it.token }))
 
-            is Either.Left -> {
-                model.addAttribute("error", output.value.message)
-                "signup"
-            }
-        }
+        return "signup"
+
+//        return when (output) {
+//            is Either.Right -> {
+//                response.addCookie(Cookie("authenticationToken", output.value.token).apply {
+//                    path = "/"
+//                    maxAge = 60 * 60 * 24
+//                })
+//                "home"
+//            }
+//
+//            is Either.Left -> {
+//                model.addAttribute("error", output.value.message)
+//                "signup"
+//            }
+//        }
     }
 }
