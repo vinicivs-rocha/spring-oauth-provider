@@ -20,7 +20,7 @@
             <div th:replace="~{fragments/input :: emailInput(labelText = #{signup.content.form.username.labelText})}"></div>
             <div th:replace="~{fragments/input :: passwordInput(labelText = #{signup.content.form.password.labelText}, inputMinimumLength = 6, visibleButtonContent='&#x1F648', invisibleButtonContent='&#x1F441')}"></div>
             <div class="mt-16 grid grid-flow-col gap-3 justify-stretch">
-                <a class="text-center bg-sky-200 p-2 rounded text-slate-900" th:href="@{/auth/login}"
+                <a class="text-center bg-sky-200 p-2 rounded text-slate-900" th:href="@{/auth/signIn}"
                    th:text="#{signup.content.form.signIn.button.text}">Autenticar-se</a>
                 <button class="text-center bg-sky-800 p-2 rounded text-slate-100" type="submit"
                         th:text="#{signup.content.form.submit.button.text}">Registrar-se

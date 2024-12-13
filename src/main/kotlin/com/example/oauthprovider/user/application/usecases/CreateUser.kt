@@ -20,7 +20,7 @@ class CreateUser(
     private val userRepository: UserRepository,
     private val encryptionGateway: EncryptionGateway
 ) {
-    data class Output(val token: String)
+    data class Output(val token: String, val user: User)
 
     fun execute(name: Name, email: Email, password: Password): Either<Failure, Output> = either {
         val user = User(
@@ -34,6 +34,6 @@ class CreateUser(
         userRepository.save(user)
 
         val encodedToken = jwtGateway.encode(token)
-        Output(encodedToken)
+        Output(token = encodedToken, user = user)
     }
 }

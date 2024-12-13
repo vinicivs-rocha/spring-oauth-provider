@@ -6,6 +6,7 @@ import com.example.oauthprovider.auth.api.authentications.UserAuthentication
 import com.example.oauthprovider.auth.application.usecases.ValidateAuthenticationToken
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.core.Authentication
+import kotlin.reflect.full.isSubclassOf
 
 class JwtAuthenticationProvider(private val validateAuthenticationToken: ValidateAuthenticationToken) :
     AuthenticationProvider {
@@ -23,8 +24,6 @@ class JwtAuthenticationProvider(private val validateAuthenticationToken: Validat
 
     override fun supports(authentication: Class<*>?): Boolean {
         if (authentication == null) return false
-        return Authentication::class.java.isAssignableFrom(authentication) && String::class.java.isAssignableFrom(
-            authentication.getMethod("getCredentials").returnType
-        )
+        return authentication.kotlin.isSubclassOf(Authentication::class) && authentication.kotlin == UserAuthentication::class
     }
 }

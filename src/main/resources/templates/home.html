@@ -1,0 +1,8 @@
+<!DOCTYPE>
+<html th:lang="#{language.code}" lang="pt-BR">
+<th:block th:insert="~{fragments/base :: head(pageTitle = #{home.page.title})}"></th:block>
+<body>
+<!--/*@thymesVar id="userName" type="java.lang.String"*/-->
+<h1 class="text-2xl" th:text="#{home.page.content.heading(${userName})}"></h1>
+</body>
+</html>
