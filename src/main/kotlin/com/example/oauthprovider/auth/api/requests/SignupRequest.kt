@@ -1,4 +1,4 @@
-package com.example.oauthprovider.user.api.requests
+package com.example.oauthprovider.auth.api.requests
 
 import com.example.oauthprovider.validation.api.annotations.DomainField
 import com.example.oauthprovider.user.domain.Email

@@ -1,7 +1,9 @@
 package com.example.oauthprovider.auth.api.controllers
 
 import arrow.core.Either
-import com.example.oauthprovider.user.api.requests.SignupRequest
+import com.example.oauthprovider.auth.api.requests.SignInRequest
+import com.example.oauthprovider.auth.api.requests.SignupRequest
+import com.example.oauthprovider.user.application.usecases.AuthenticateUser
 import com.example.oauthprovider.user.application.usecases.CreateUser
 import com.example.oauthprovider.validation.api.annotations.DomainBody
 import jakarta.servlet.http.Cookie
@@ -17,10 +19,32 @@ import org.springframework.web.bind.annotation.RequestMapping
 @RequestMapping("/auth")
 class AuthenticationController(
     private val createUser: CreateUser,
+    private val authenticateUser: AuthenticateUser,
 ) {
     @GetMapping("/signIn")
     fun signIn(model: Model): String {
-        return "signup"
+        return "signIn"
+    }
+
+    @PostMapping("/signIn")
+    fun signIn(@DomainBody signInRequest: SignInRequest, response: HttpServletResponse, model: Model): String {
+        val output = authenticateUser.execute(
+            email = signInRequest.email,
+            password = signInRequest.password
+        )
+
+        return when (output) {
+            is Either.Right -> {
+                addCookie(response, output.value.token)
+                model["userName"] = output.value.user.name
+                "home"
+            }
+
+            is Either.Left -> {
+                model["error"] = output.value.message
+                "signIn"
+            }
+        }
     }
 
     @GetMapping("/signup")
@@ -42,11 +66,7 @@ class AuthenticationController(
 
         return when (output) {
             is Either.Right -> {
-                response.addCookie(Cookie("authenticationToken", output.value.token).apply {
-                    path = "/"
-                    maxAge = 60 * 60 * 24
-                    isHttpOnly = true
-                })
+                addCookie(response, output.value.token)
                 model["userName"] = output.value.user.name
                 "home"
             }
@@ -56,5 +76,13 @@ class AuthenticationController(
                 "signup"
             }
         }
+    }
+
+    private fun addCookie(response: HttpServletResponse, token: String) {
+        response.addCookie(Cookie("authenticationToken", token).apply {
+            path = "/"
+            maxAge = 60 * 60 * 24
+            isHttpOnly = true
+        })
     }
 }

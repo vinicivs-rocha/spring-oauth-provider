@@ -40,11 +40,15 @@ class UserMongoRepository(private val mongoTemplate: MongoTemplate) : UserReposi
         mongoTemplate.save(newUser)
     }
 
-    override fun findOne(id: String?): Either<Failure, User?> = either {
+    override fun findOne(id: String?, email: Email?): Either<Failure, User?> = either {
         val query = Query()
 
         if (id != null) {
             query.addCriteria(Criteria.where("id").`is`(id))
+        }
+
+        if (email != null) {
+            query.addCriteria(Criteria.where("email").`is`(email.value))
         }
 
         mongoTemplate.findOne(query, UserModel::class.java)?.let { userModel ->

@@ -21,6 +21,12 @@ import org.springframework.security.web.util.matcher.RequestMatchers
 @Configuration
 @EnableWebSecurity
 class SecurityConfiguration {
+    private val publicUrls = listOf(
+        "/auth/signup",
+        "/auth/signIn",
+        "/favicon.ico"
+    )
+
     @Bean
     fun filterChain(
         http: HttpSecurity,
@@ -32,9 +38,7 @@ class SecurityConfiguration {
                 sessionCreationPolicy = SessionCreationPolicy.STATELESS
             }
             authorizeHttpRequests {
-                authorize("/auth/signup", permitAll)
-                authorize("/auth/signIn", permitAll)
-                authorize("/favicon.ico", permitAll)
+                publicUrls.forEach { authorize(it, permitAll) }
                 authorize(requiresAuthentication(), authenticated)
             }
             requestCache {
@@ -42,7 +46,7 @@ class SecurityConfiguration {
             }
             exceptionHandling {
                 authenticationEntryPoint =
-                    AuthenticationEntryPoint { request, response, authException -> response.sendRedirect("/auth/signIn") }
+                    AuthenticationEntryPoint { _, response, _ -> response.sendRedirect("/auth/signIn") }
             }
         }
 
@@ -61,9 +65,7 @@ class SecurityConfiguration {
     @Bean
     fun requiresAuthentication(): RequestMatcher {
         return RequestMatchers.allOf(
-            NegatedRequestMatcher(AntPathRequestMatcher("/favicon.ico")),
-            NegatedRequestMatcher(AntPathRequestMatcher("/auth/signup")),
-            NegatedRequestMatcher(AntPathRequestMatcher("/auth/signIn")),
+            *publicUrls.map { NegatedRequestMatcher(AntPathRequestMatcher(it)) }.toTypedArray(),
         )
     }
 }

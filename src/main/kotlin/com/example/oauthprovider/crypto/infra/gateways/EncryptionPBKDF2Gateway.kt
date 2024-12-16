@@ -2,7 +2,6 @@ package com.example.oauthprovider.crypto.infra.gateways
 
 import com.example.oauthprovider.crypto.application.gateways.EncryptionGateway
 import org.springframework.stereotype.Component
-import java.security.SecureRandom
 import java.util.*
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
@@ -11,7 +10,7 @@ import javax.crypto.spec.PBEKeySpec
 class EncryptionPBKDF2Gateway(
     private val iterations: Int = 65536,
     private val keyLength: Int = 256,
-    private val salt: ByteArray = ByteArray(16).also { SecureRandom().nextBytes(it) }
+    private val salt: ByteArray = "salt".toByteArray()
 ) : EncryptionGateway {
     override fun <T> hash(value: T): String {
         return when (value) {
