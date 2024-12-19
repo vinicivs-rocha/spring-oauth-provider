@@ -1,0 +1,6 @@
+<div
+        class="transition duration-300 fixed top-8 left-0 toast bg-white z-10 p-4 rounded flex gap-2">
+    <!--/*@thymesVar id="message" type="java.lang.String"*/-->
+    <span th:text="${message}"></span>
+    <button class="" onclick="turnInvisible(this.parentElement)">&times;</button>
+</div>
