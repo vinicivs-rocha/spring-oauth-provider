@@ -37,7 +37,8 @@ class AuthenticationController(
             is Either.Right -> {
                 addCookie(response, output.value.token)
                 model["userName"] = output.value.user.name
-                "redirect:/home"
+                response.addHeader("HX-Redirect", "/home")
+                "home"
             }
 
             is Either.Left -> {
@@ -68,7 +69,8 @@ class AuthenticationController(
             is Either.Right -> {
                 addCookie(response, output.value.token)
                 model["userName"] = output.value.user.name
-                "redirect:/home"
+                response.addHeader("HX-Redirect", "/home")
+                "home"
             }
 
             is Either.Left -> {
