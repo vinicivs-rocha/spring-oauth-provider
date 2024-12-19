@@ -15,7 +15,8 @@
 <div class="flex flex-col items-center justify-center min-h-screen">
     <h1 class="text-2xl mb-16" th:text="#{signIn.content.heading}">Registre-se com seu e-mail e senha</h1>
     <div class="w-1/4">
-        <form class="flex flex-col gap-3" hx-target="body" th:hx-post="@{/auth/signIn}" hx-ext="json-enc">
+        <form class="flex flex-col gap-3" th:hx-post="@{/auth/signIn}" hx-target="body" hx-swap="afterbegin"
+              th:method="POST">
             <div th:replace="~{fragments/input :: emailInput(labelText = #{signIn.content.form.username.labelText})}"></div>
             <div th:replace="~{fragments/input :: passwordInput(labelText = #{signIn.content.form.password.labelText}, inputMinimumLength = 6, visibleButtonContent='&#x1F648', invisibleButtonContent='&#x1F441')}"></div>
             <div class="mt-16 grid grid-flow-col gap-3 justify-stretch">
@@ -27,9 +28,7 @@
             </div>
         </form>
     </div>
-    <!--/*@thymesVar id="error" type="java.lang.String"*/-->
-    <div th:replace="~{fragments/toast :: toast(${error})}"></div>
-    <div th:replace="~{fragments/toast :: toastsScript}"></div>
+    <div th:replace="~{fragments/toastScript :: toastsScript}"></div>
 </div>
 </body>
 </html>

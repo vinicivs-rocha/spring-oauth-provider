@@ -43,8 +43,8 @@ class DomainBodyResolver(
     ): Any? {
         val request = webRequest.getNativeRequest(HttpServletRequest::class.java)
             ?: throw IllegalStateException("Could not retrieve HttpServletRequest")
-        val requestBody =
-            objectMapper.readValue(request.reader.readText(), object : TypeReference<Map<String, Any>>() {})
+        val formData = mapOf(*request.parameterMap.map { (key, value) -> key to value.joinToString(separator = ",") }
+            .toTypedArray())
         val parameterClass = parameter.parameterType.kotlin
         val constructor = parameterClass.primaryConstructor
             ?: throw IllegalArgumentException(
@@ -52,7 +52,7 @@ class DomainBodyResolver(
             )
 
         return when (val instance =
-            instantiateDomainValidParameter(constructor, parameterClass.memberProperties, requestBody)) {
+            instantiateDomainValidParameter(constructor, parameterClass.memberProperties, formData)) {
             is Right -> instance.value
             is Either.Left -> when (instance.value.code) {
                 FailureCode.InvalidSetupParameter -> throw IllegalArgumentException(instance.value.message)
@@ -69,7 +69,7 @@ class DomainBodyResolver(
     private fun instantiateDomainValidParameter(
         constructor: KFunction<Any>,
         properties: Collection<KProperty1<out Any, *>>,
-        requestBody: Map<String, Any>
+        requestData: Map<String, Any>
     ): Either<Failure, Any> = either {
         constructor.callBy(constructor.parameters.associateWith {
             val property = ensureNotNull(properties.find { property -> property.name == it.name }) {
@@ -78,7 +78,7 @@ class DomainBodyResolver(
                     message = "Domain valid constructor parameter ${it.name} not found in properties"
                 )
             }
-            evaluateValue(property, requestBody).bind()
+            evaluateValue(property, requestData).bind()
         })
     }
 
